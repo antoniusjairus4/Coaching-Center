@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JHPTTC – Jairus High Performance Table Tennis Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #e63946;
+            --gold: #ffd166;
+            --deep-navy: #0a0a1a;
+            --glass-bg: rgba(255,255,255,0.07);
+            --glass-border: rgba(255,255,255,0.18);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            color: #fff;
+            /* Unified warm gradient – no image dependency */
+            background:
+                radial-gradient(ellipse at 20% 10%, rgba(230, 57, 70, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 90%, rgba(255, 150, 30, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 30%, rgba(255, 80, 50, 0.18) 0%, transparent 45%),
+                linear-gradient(145deg, #0f0c1a 0%, #1a0d12 30%, #180c0c 60%, #0e0a18 100%);
+            background-attachment: fixed;
+        }
+
+        /* subtle noise grain */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 60px;
+            background: rgba(10, 6, 20, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-shadow: 0 0 24px rgba(255, 209, 102, 0.45);
+        }
+
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -4px;
+            width: 0; height: 1.5px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 40px 80px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(230,57,70,0.15);
+            border: 1px solid rgba(230,57,70,0.4);
+            color: #ff8a94;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 7px 20px;
+            border-radius: 50px;
+            margin-bottom: 28px;
+            animation: fadeUp 0.8s ease both;
+        }
+
+        .hero h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.5rem, 9vw, 8rem);
+            line-height: 0.95;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+            animation: fadeUp 0.9s ease 0.1s both;
+        }
+
+        .hero h1 span { color: var(--gold); }
+
+        .hero-sub {
+            margin-top: 22px;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 1px;
+            animation: fadeUp 0.9s ease 0.2s both;
+            max-width: 560px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            margin-top: 44px;
+            animation: fadeUp 0.9s ease 0.35s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--red), #c0392b);
+            color: #fff;
+            padding: 14px 38px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+            box-shadow: 0 4px 22px rgba(230,57,70,0.45);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(230,57,70,0.6);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #fff;
+            padding: 14px 38px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.6); }
+
+        /* scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.4;
+            animation: fadeUp 1s ease 0.8s both;
+        }
+        .scroll-hint span { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; }
+        .scroll-arrow {
+            width: 1px;
+            height: 36px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.6));
+            animation: scrollPulse 1.8s ease infinite;
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.4; transform: scaleY(0.7); }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+
+        /* ── SECTIONS ── */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 90px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .section-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.93rem;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        /* ── ADVANTAGES ── */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+            gap: 20px;
+        }
+
+        .adv-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px 28px;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .adv-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,209,102,0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .adv-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            border-color: rgba(255,209,102,0.25);
+        }
+        .adv-card:hover::before { opacity: 1; }
+
+        .adv-icon { font-size: 2.2rem; margin-bottom: 16px; }
+
+        .adv-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .adv-card p {
+            font-size: 0.87rem;
+            color: rgba(255,255,255,0.62);
+            line-height: 1.65;
+        }
+
+        /* ── CHAMPIONS ── */
+        .table-wrap {
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 12px 50px rgba(0,0,0,0.3);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead { background: rgba(230,57,70,0.2); }
+
+        thead th {
+            padding: 20px 26px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.06); }
+
+        tbody td {
+            padding: 18px 26px;
+            font-size: 0.93rem;
+            color: rgba(255,255,255,0.82);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-gold   { background: rgba(255,209,102,0.18); color: var(--gold); border: 1px solid rgba(255,209,102,0.38); }
+        .badge-silver { background: rgba(200,210,230,0.18); color: #cde; border: 1px solid rgba(200,220,240,0.3); }
+        .badge-part   { background: rgba(120,190,255,0.14); color: #a8d8ff; border: 1px solid rgba(130,200,255,0.28); }
+
+        .rank-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 80px 40px 110px;
+        }
+
+        .cta-glass {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 30px;
+            padding: 64px 56px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+        }
+
+        .cta-glass h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .cta-glass p {
+            color: rgba(255,255,255,0.58);
+            font-size: 0.98rem;
+            margin-bottom: 38px;
+            line-height: 1.7;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.83rem;
+        }
+        footer span { color: var(--gold); }
+
+        /* ── DIVIDER ── */
+        .divider {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            section { padding: 60px 24px; }
+            .hero-btns { flex-direction: column; align-items: center; }
+            .cta-glass { padding: 40px 28px; }
+            thead th, tbody td { padding: 12px 14px; font-size: 0.83rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">JHPTTC</div>
+        <ul class="nav-links">
+            <li><a href="#advantages">Advantages</a></li>
+            <li><a href="#champions">Champions</a></li>
+            <li><a href="#register">Register</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge">🏓 Elite Table Tennis Academy</div>
+        <h1>Jairus High<br>Performance <span>TT</span> Center</h1>
+        <p class="hero-sub">Train with Champions. Compete at the Highest Level. Forge Your Legacy.</p>
+        <div class="hero-btns">
+            <a href="form.html" class="btn-primary">Register Now</a>
+            <a href="#advantages" class="btn-ghost">Learn More</a>
+        </div>
+        <div class="scroll-hint">
+            <span>Scroll</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ADVANTAGES -->
+    <section id="advantages">
+        <div class="section-eyebrow">The Sport</div>
+        <div class="section-title">Why Table Tennis?</div>
+        <p class="section-sub">More than a game — it's a lifestyle that sharpens the mind, sculpts the body, and builds champions.</p>
+        <div class="advantages-grid">
+            <div class="adv-card">
+                <div class="adv-icon">🧠</div>
+                <h3>Sharpens the Mind</h3>
+                <p>Rapid decision-making and hand-eye coordination build exceptional mental agility and laser focus under pressure.</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">⚡</div>
+                <h3>Full Body Fitness</h3>
+                <p>Improves reflexes, footwork, core strength, and cardiovascular endurance through every intense rally.</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">🎯</div>
+                <h3>Strategic Thinking</h3>
+                <p>Every rally is a chess match. Develop tactical awareness, read your opponent, and choose shots with purpose.</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">🏆</div>
+                <h3>Competitive Opportunities</h3>
+                <p>District, state and national tournaments provide a clear pathway to athletic achievement and recognition.</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">😊</div>
+                <h3>Mental Well-being</h3>
+                <p>Reduces stress, boosts confidence, and builds lasting friendships through shared passion and team spirit.</p>
+            </div>
+            <div class="adv-card">
+                <div class="adv-icon">📈</div>
+                <h3>Lifelong Sport</h3>
+                <p>Suitable for all ages and fitness levels — a sport you can pick up at any point and love forever.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CHAMPIONS TABLE -->
+    <section id="champions">
+        <div class="section-eyebrow">Hall of Fame</div>
+        <div class="section-title">Our Champions</div>
+        <p class="section-sub">Athletes who have represented JHPTTC at the Tamil Nadu State Level — and proved what's possible.</p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Athlete</th>
+                        <th>Achievements</th>
+                        <th>State Titles</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank-num">01</span></td>
+                        <td><strong>Jairus</strong></td>
+                        <td>4× Tamil Nadu State Winner</td>
+                        <td>🥇🥇🥇🥇</td>
+                        <td><span class="badge badge-gold">4x Champion</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">02</span></td>
+                        <td><strong>Apollo</strong></td>
+                        <td>2× Tamil Nadu State Winner</td>
+                        <td>🥇🥇</td>
+                        <td><span class="badge badge-gold">2x Champion</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">03</span></td>
+                        <td><strong>Elgin</strong></td>
+                        <td>1× Tamil Nadu State Winner</td>
+                        <td>🥇</td>
+                        <td><span class="badge badge-silver">1x Champion</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-num">04</span></td>
+                        <td><strong>Tarun</strong></td>
+                        <td>State Level Participant</td>
+                        <td>—</td>
+                        <td><span class="badge badge-part">2x Participant</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CTA -->
+    <div class="cta-section" id="register">
+        <div class="cta-glass">
+            <h2>Ready to Join JHPTTC?</h2>
+            <p>Take the first step towards becoming a champion. Register today and train alongside state-level athletes in an environment built for the ambitious.</p>
+            <a href="form.html" class="btn-primary">Register Now</a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 <span>JHPTTC</span> — Jairus High Performance Table Tennis Center. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
